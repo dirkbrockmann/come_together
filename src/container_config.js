@@ -3,7 +3,7 @@
 // be passed to the load() method defined in index.js.
 
 export default {
-	display_type:"svg", // either svg or canvas depending on explorable
+	display_type:"canvas", // either svg or canvas depending on explorable
 	debug:false,  // if set to true, draws dots on the control panel to help widget placement
 	debug_lattice:"debug-grid-16",
 	controls_grid:{nx:12,ny:12},

@@ -24,4 +24,8 @@ const dist = (a,b) => {
 	return Math.sqrt(dx*dx + dy*dy);
 }
 
-export {toArray,add_id_label,add_widget,get_variables,get_booleans,get_choices,deg2rad,rad2deg,dist}
+const c2l = (x,y,N) => { return y*N+x }
+const l2c = (l,N) => { return {x:l % N,y:Math.floor(l/N)} }
+
+
+export {c2l,l2c,toArray,add_id_label,add_widget,get_variables,get_booleans,get_choices,deg2rad,rad2deg,dist}

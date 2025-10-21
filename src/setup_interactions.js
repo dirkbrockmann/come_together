@@ -11,7 +11,7 @@ import cfg from "./config.js"
 import param from "./parameters.js"
 import resetparameters from "./reset_parameters.js"
 import {iterate,initialize,update} from "./simulation.js"
-
+import toggle_advanced_settings from "./toggle_advanced.js"
 var timer = {}
 
 // this defines a startstop simulation function that execute the function iterate() that is defined in simulation.js
@@ -25,11 +25,18 @@ const startstop = (display,config) => {
 // this function is called by index.js to connect actions and update functions to the explorables.
 // once this is called, all widgets are usable in the controls panel
 
+
 export default (display,controls,config) => {
 	
 	ct.reset.update(()=>resetparameters(controls))	// one button gets the resetparameters() method defined in resetparameters.js
 	ct.go.update(() => startstop(display,config)) // one button gets the startstop function defined above
 	ct.setup.update(() => initialize(display,config)) // this once gets the initialize() method defined in simulation.js
-	param.number_of_particles.widget.update(()=>initialize(display,config)) // here we say that if a specific parameter is changed, in this case the number of particles, we also re_initialize the system (model and visuals)	
+	param.advanced_settings.widget.update(()=>{
+		toggle_advanced_settings(controls);
+	}) 
+	param.hide_cAMP.widget.update(() => update(display,config))
+	param.hide_cells.widget.update(() => update(display,config))
+	param.show_cell_state.widget.update(() => update(display,config))	
+	param.switch_off_pacemaker.widget.update(() => update(display,config))	
 }
 

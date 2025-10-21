@@ -7,62 +7,75 @@
 
 import * as d3 from "d3"
 import param from "./parameters.js"
-import {agents} from "./model.js"
+import {agents,sites} from "./model.js"
 import styles from "./styles.module.css"
+import {each,range,map,mean} from "lodash-es"
 
 const L = param.L;
-const X = d3.scaleLinear().domain([0,L]);
-const Y = d3.scaleLinear().domain([0,L]);
+const M = param.M;
+const N = param.N
 
-// the initialization function, this is bundled in simulation.js with the initialization of
-// the model and effectively executed in index.js when the whole explorable is loaded
-// typically here all the elements in the SVG or CANVAS element are set.
+const cmax = param.cAMP_pulse_strength.widget.value();
+//const cmax = 1;
+
+
+
+const X = d3.scaleLinear().domain([-L/2,L/2])
+const Y = d3.scaleLinear().domain([-L/2,L/2])
+const C = d3.scaleSqrt().domain([0,cmax]).range(["#F6FFFE","rgb(0,0,255)"])
+
+const ca1 = ["rgb(100,100,100,0.7)","rgba(100,100,100,0.7)","rgba(100,100,100,0.7)"]
+const ca2 = ["rgba(150,150,150,.7)","darkred","rgba(100,100,100,0.7)"]
+
+const C2_agents = d3.scaleOrdinal().domain([0,1,2]).range(ca1)
+const C1_agents = d3.scaleOrdinal().domain([0,1,2]).range(ca2)
+
+var W,H,ctx;
+
+const draw_camp = () => {	
+	ctx.clearRect(0, 0, W, H);
+	each(sites,s =>{
+		const c = s.cell();
+		ctx.fillStyle=C(s.cAMP);
+		ctx.strokeStyle = C(s.cAMP);
+		ctx.lineWidth = 0;
+		ctx.fillRect(X(c[0].x),X(c[0].y),X(c[2].x)-X(c[0].x)-2,X(c[2].y)-X(c[0].y)-2)
+		
+	})		
+}
+
+const draw_agents = () => {
+	each(agents,d => {
+		ctx.beginPath();
+		ctx.fillStyle=d.type == "pacemaker" ? "red" : param.show_cell_state.widget.value() ? C1_agents(d.state) : C2_agents(d.state);
+		const factor = d.type == "pacemaker" && d.state==1 ? 2 : 1
+	  	ctx.arc(X(d.x),Y(d.y),factor*param.agentsize,0,2*Math.PI);
+		ctx.fill();
+	  	ctx.closePath();
+	})
+}
+
 
 const initialize = (display,config) => {
 
-	const W = config.display_size.width;
-	const H = config.display_size.height;
-	
+	W = config.display_size.width;
+ 	H = config.display_size.height;
 	X.range([0,W]);
 	Y.range([0,H]);
-		
-	display.selectAll("#origin").remove();
-	
-	const origin = display.append("g").attr("id","origin")
-	
-	origin.selectAll(null).data(agents).enter().append("circle")
-		.attr("class",styles.agent)
-		.attr("cx",d=>X(d.x))
-		.attr("cy",d=>Y(d.y))
-		.attr("r",X(param.agentsize/2))
-		.style("fill", d => param.color_by_heading.widget.value() ? d3.interpolateSinebow(d.theta/2/Math.PI)  : null)
-	
+	ctx = display.node().getContext('2d');
+	ctx.clearRect(0,0,W,H);
+
+	if(!param.hide_cAMP.widget.value()) {draw_camp()};
+	if(!param.hide_cells.widget.value()) {draw_agents()};
 };
 
-// the go function, this is bundled in simulation.js with the go function of
-// the model, typically this is the iteration function of the model that
-// is run in the explorable. It contains the code that updates the parts of the display
-// panel as a function of the model quantities.
-
 const go = (display,config) => {
-	
-	display.selectAll("."+styles.agent)
-		.attr("cx",d=>X(d.x))
-		.attr("cy",d=>Y(d.y))
-		.style("fill", d => param.color_by_heading.widget.value() ? d3.interpolateSinebow(d.theta/2/Math.PI)  : null)
-	
+	ctx.clearRect(0,0,W,H);
+	if(!param.hide_cAMP.widget.value()) {draw_camp()};
+	if(!param.hide_cells.widget.value()) {draw_agents()};
 }
 
-// the update function is usually not required for running the explorable. Sometimes
-// it makes sense to have it, e.g. to update the visualization, if a parameter is changed,
-// e.g. a radio button is pressed, when the system is not running, e.g. when it is paused.
-
-const update = (display,config) => {
-	
-	display.selectAll("."+styles.node)
-		.style("fill", d => param.color_by_heading.widget.value() ? d3.interpolateSinebow(d.theta/2/Math.PI)  : null)
-	
-}
+const update = go;
 
 
 export {initialize,go,update}

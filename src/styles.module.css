@@ -1,20 +1,23 @@
-.agent {
-	fill: black;
-}
-
 .displayPanel {
   /* Styles for the display panel */
   display: block;
+  line-height: 0;
+  box-sizing: border-box;
 }
 
 .controlPanel {
   /* Styles for the control panel */
   display: block;
+  line-height: 0;
+  box-sizing: border-box;
 }
 
-
-@media (prefers-color-scheme: dark) {
-	.agent {
-		fill: white;
-	}
+/* Ensure media children don't introduce baseline descender spacing */
+.displayPanel > canvas,
+.displayPanel > svg,
+.controlPanel > svg,
+.controlPanel > canvas {
+  display: block;
+  box-sizing: border-box;
 }
+

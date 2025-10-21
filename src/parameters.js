@@ -6,28 +6,58 @@
 // utils.js provides methods for extracting various types of parameters for later use
 
 export default {
-		dt:1,
-		L:100,
-		agentsize: 1.0,
+		N:4000,
+		M:40,
+		L:81,
+		agentsize: 2.0,
+		dt:0.1,
 	
-		speed: {
-			range:[0,1],
-			default:0.2
+		responsiveness: {
+			range:[0.1,0.5],
+			default:0.3
 		},
-		wiggle: {
-			range:[0,180],
-			default:50
+		random_movement: {
+			range:[0,0.5],
+			default:0.1
 		},
-		interaction_radius:{
-			range : [0,5],
-			default : 3
+		recovery_time:{
+			range : [10,40],
+			default : 20
 		},
-		number_of_particles : {
-			choices:[50,100,200,400],
-		default:2
+		cAMP_pulse_strength: {
+			range:[100,300],
+			default:200
 		},
-		color_by_heading: {
-			default: true
+		cAMP_life_time: {
+			range:[0,-2],
+			default:-1.13
+		},
+		cAMP_diffusion:{
+			range : [0,1],
+			default : 0.64
+		},
+		activation_threshold:{
+			range : [2,10],
+			default : 9.15
+		},
+		movement_threshold: {
+			range:[2,20],
+			default:15
+		},
+		hide_cells: {
+			default: false
+		},
+		hide_cAMP: {
+			default: false
+		},
+		show_cell_state: {
+			default: false
+		},
+		switch_off_pacemaker: {
+			default: false
+		},
+		advanced_settings: {
+			default: false
 		}
 }
 
